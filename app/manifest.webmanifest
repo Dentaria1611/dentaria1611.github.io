@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "any",
   "background_color": "#FFFFFF",
-  "theme_color": "#0369A1",
+  "theme_color": "#1F4E6B",
   "lang": "es",
   "icons": [
     {
@@ -22,5 +22,6 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ]
+  ],
+  "id": "/app/"
 }
