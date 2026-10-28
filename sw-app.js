@@ -1,7 +1,7 @@
 /* Dentaria: permite abrir la app sin internet. Las páginas se piden primero a la red (así siempre ves la versión
    más nueva) y, si no hay conexión, se usa la última copia guardada. Los datos del consultorio NO pasan por aquí:
    siguen guardándose en el navegador y en la nube como siempre. */
-const VERSION = 'dentaria-app-v55';
+const VERSION = 'dentaria-app-v57';
 const BASE = ['./app.html', './manifest-app.webmanifest', './icon-192.png', './icon-512.png', './icon-180.png'];
 const NO_CACHEAR = /(firestore|identitytoolkit|securetoken|googleapis\.com\/(?!css)|accounts\.google|oauth2|apis\.google\.com|calendar)/i;
 
