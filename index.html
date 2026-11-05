@@ -284,6 +284,20 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
 @keyframes chk{to{stroke-dashoffset:0}}
 .firma-nota{font-size:12px;color:#7A92A3}
 @media (prefers-reduced-motion:reduce){.pruebalo::after,.firma-guia path,.firma-ok,.firma-ok .chk{animation:none}.firma-guia path{stroke-dashoffset:0}.firma-ok .chk{stroke-dashoffset:0}}
+/* demo de reporte de ingresos (cifras de ejemplo) */
+.ing-seg{display:flex;gap:4px;margin:16px 20px 0;padding:4px;background:var(--agua);border-radius:999px}
+.ing-seg button{flex:1;min-height:38px;border:0;background:transparent;border-radius:999px;font:700 14px/1 'Plus Jakarta Sans',sans-serif;color:var(--suave);cursor:pointer;transition:background .2s,color .2s,box-shadow .2s}
+.ing-seg button[aria-selected=true]{background:#fff;color:var(--hondo);box-shadow:0 2px 8px rgba(4,36,58,.12)}
+.ing-total{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:16px 20px 6px;font-size:14px;color:var(--suave);font-weight:600}
+.ing-total b{font-size:28px;color:var(--ok);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ing-filas{padding:4px 20px 10px;min-height:292px}
+.ing-f{display:grid;grid-template-columns:86px 1fr 74px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #EEF3F7;font-size:14px}
+.ing-f:last-child{border-bottom:0}
+.ing-f b{text-align:right;font-variant-numeric:tabular-nums;font-size:13.5px}
+.ing-f i{display:block;height:9px;border-radius:5px;background:linear-gradient(90deg,var(--celeste),var(--hondo));width:0;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.ing-f.pago{grid-template-columns:1fr auto}
+.ing-f.pago span small{display:block;color:var(--suave);font-size:12px}
+@media (max-width:420px){.ing-f{grid-template-columns:70px 1fr 66px}.ing-seg{margin:14px 14px 0}.ing-total,.ing-filas{padding-left:14px;padding-right:14px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -466,7 +480,7 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
         <ul class="lista">
           <li>Presupuestos y planes de pago por paciente</li>
           <li>Abonos y saldo pendiente siempre al día</li>
-          <li>Gastos, inventario y reporte del mes, con lo de cada especialista</li>
+          <li>Gastos, inventario y reportes de ingresos, con lo de cada especialista</li>
         </ul>
       </div>
       <div class="lienzo">
@@ -478,6 +492,32 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
           <div class="total"><span>Total</span><span>$110,00</span></div>
           <div class="renglon" style="border:0;padding-bottom:4px"><span style="color:var(--ok);font-weight:700">Abonado $68,00</span><b style="color:#B91C1C">Saldo $42,00</b></div>
           <div class="barra-p"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fila">
+      <div class="texto">
+        <h3>Tus ingresos por día, semana, mes o semestre</h3>
+        <p>Con un toque cambias el período y ves cuánto cobraste, repartido día por día, semana por semana o mes por mes.</p>
+        <ul class="lista">
+          <li>Compara con el período anterior</li>
+          <li>Pagos del día con paciente y forma de pago</li>
+          <li>Imprime el reporte o descarga los pagos en Excel (.csv)</li>
+        </ul>
+      </div>
+      <div class="lienzo">
+        <div class="tarj" id="ingDemo">
+          <div class="tarj-cab">Reporte de ingresos <span class="pruebalo">Pruébalo</span></div>
+          <div class="ing-seg" role="tablist" aria-label="Período">
+            <button type="button" role="tab" data-p="dia" aria-selected="false">Día</button>
+            <button type="button" role="tab" data-p="semana" aria-selected="true">Semana</button>
+            <button type="button" role="tab" data-p="mes" aria-selected="false">Mes</button>
+            <button type="button" role="tab" data-p="semestre" aria-selected="false">Semestre</button>
+          </div>
+          <div class="ing-total"><span id="ingRot">Cobrado en la semana</span><b id="ingTot">$0,00</b></div>
+          <div class="ing-filas" id="ingFilas" aria-live="polite"></div>
+          <span class="firma-nota" style="display:block;padding:0 20px 16px">Cifras de ejemplo.</span>
         </div>
       </div>
     </div>
@@ -743,6 +783,29 @@ document.querySelectorAll('.arcada').forEach(a=>a.addEventListener('click',ev=>{
     document.getElementById('firmaFecha').textContent=z(d.getDate())+'/'+z(d.getMonth()+1)+'/'+d.getFullYear()+' '+z(d.getHours())+':'+z(d.getMinutes());
     ok.hidden=false;});
   addEventListener('resize',pintar);pintar();
+})();
+/* demo de reporte de ingresos: cifras de ejemplo, no se conecta a nada */
+(function(){
+  const caja=document.getElementById('ingDemo');if(!caja)return;
+  const fmt=n=>'$'+n.toFixed(2).replace('.',',');
+  const D={
+    dia:{rot:'Cobrado en el día',pagos:[['Paciente A','Efectivo',40],['Paciente B','Transferencia',35],['Paciente C','Tarjeta',25]]},
+    semana:{rot:'Cobrado en la semana',f:[['Lun',60],['Mar',95],['Mié',100],['Jue',40],['Vie',120],['Sáb',70],['Dom',0]]},
+    mes:{rot:'Cobrado en el mes',f:[['1 al 7',380],['8 al 14',485],['15 al 21',300],['22 al 28',410],['29 al 30',150]]},
+    semestre:{rot:'Cobrado en el semestre',f:[['Julio',1520],['Agosto',1690],['Septiembre',1410],['Octubre',1730],['Noviembre',1725],['Diciembre',1380]]}
+  };
+  const filas=document.getElementById('ingFilas'),tot=document.getElementById('ingTot'),rot=document.getElementById('ingRot');
+  function ver(p){
+    const d=D[p];rot.textContent=d.rot;
+    caja.querySelectorAll('.ing-seg button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===p));
+    if(d.pagos){tot.textContent=fmt(d.pagos.reduce((a,x)=>a+x[2],0));
+      filas.innerHTML=d.pagos.map(x=>'<div class="ing-f pago"><span>'+x[0]+'<small>'+x[1]+'</small></span><b>'+fmt(x[2])+'</b></div>').join('');return;}
+    const max=Math.max(...d.f.map(x=>x[1]),1);tot.textContent=fmt(d.f.reduce((a,x)=>a+x[1],0));
+    filas.innerHTML=d.f.map(x=>'<div class="ing-f"><span>'+x[0]+'</span><i data-w="'+(x[1]/max*100).toFixed(1)+'"></i><b>'+(x[1]?fmt(x[1]):'—')+'</b></div>').join('');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>filas.querySelectorAll('i').forEach(i=>i.style.width=i.dataset.w+'%')));
+  }
+  caja.querySelectorAll('.ing-seg button').forEach(b=>b.addEventListener('click',()=>ver(b.dataset.p)));
+  ver('semana');
 })();
 </script>
 </body>
