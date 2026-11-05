@@ -1388,10 +1388,104 @@ function opcionesProfesionales(e){return'<option value="">— Sin asignar —</o
         ${a.lote?`<span class="mini" style="margin-left:8px">Lote ${esc(a.lote)}</span>`:""}
         ${n?'<span class="mini" style="color:var(--alerta);margin-left:8px">Vencido</span>':i?`<span class="mini" style="color:#B98A2E;margin-left:8px">Vence en ${o} días</span>`:""}
         ${s?'<span class="mini" style="color:var(--alerta);margin-left:8px">Stock bajo</span>':""}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          <button class="btn chico" onclick="event.stopPropagation();descargarMaterial('${a.id}')">Descargar (uso)</button>
+          <button class="btn chico" onclick="event.stopPropagation();ingresarMaterial('${a.id}')">Ingresar</button>
+          <button class="btn chico" onclick="event.stopPropagation();historialMaterial('${a.id}')">Historial${(a.movimientos||[]).length?" ("+a.movimientos.length+")":""}</button></div>
       </div></div>`};$("#vista").innerHTML=`<div class="cabecera"><div><h2>Inventario</h2>
       <div class="sub">${e.length} producto${e.length===1?"":"s"}</div></div>
       <div class="spacer"></div><button class="btn primario" onclick="abrirItemInventario()">Agregar producto</button></div>
-    <div class="bloque">${e.length?e.map(t).join(""):'<p class="mini">Aún no has agregado productos al inventario.</p>'}</div>`}function abrirItemInventario(e){var a,o;const t=e?datos.inventario.find(n=>n.id===e):{nombre:"",lote:"",fechaVenc:"",cantidad:"",unidad:"unidades",stockMinimo:""};if(abrirModal(e?"Editar producto":"Nuevo producto",`
+    <div class="bloque">${e.length?e.map(t).join(""):'<p class="mini">Aún no has agregado productos al inventario.</p>'}</div>
+    ${usoRecienteHTML()}`}/* ---------- uso de material: descargas (salidas) e ingresos de cada producto, con historial ----------
+   Cada producto guarda sus movimientos: {id,tipo:'salida'|'entrada',fecha,cantidad,motivo,pacienteId,pacienteNombre,proveedor}.
+   La cantidad del producto sube o baja sola; al borrar un movimiento se devuelve la cantidad. */
+const numInv=v=>Math.round((Number(v)||0)*100)/100;
+function itemInv(id){return (datos.inventario||[]).find(x=>x.id===id);}
+function listaPacientesDL(){return `<datalist id="dl_pacientes_inv">${[...datos.pacientes].map(p=>p.nombre||'').filter(Boolean).sort((a,b)=>a.localeCompare(b)).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>`;}
+function descargarMaterial(id,pacienteId){
+  const it=itemInv(id);if(!it)return;
+  const stock=numInv(it.cantidad),pDef=pacienteId?pac(pacienteId):null;
+  abrirModal('Descargar material usado',`
+    <p style="margin-top:0"><b>${esc(it.nombre)}</b> · hay <b>${esc(stock)} ${esc(it.unidad||'')}</b></p>
+    <div class="grid">
+      <label class="campo"><span>Cantidad usada</span><input type="number" step="0.01" min="0" id="mv_cant" inputmode="decimal" placeholder="1"></label>
+      <label class="campo"><span>Fecha</span><input type="date" id="mv_fecha" value="${hoy()}"></label>
+    </div>
+    <label class="campo"><span>Paciente (opcional)</span><input type="text" id="mv_pac" list="dl_pacientes_inv" value="${esc(pDef?pDef.nombre:'')}" placeholder="Escribe el nombre del paciente">${listaPacientesDL()}</label>
+    <label class="campo"><span>Motivo (opcional)</span><input type="text" id="mv_motivo" placeholder="Exodoncia, endodoncia, uso en consulta…"></label>`,
+  ()=>{
+    const c=numInv($('#mv_cant').value);
+    if(c<=0){avisar('Escribe cuánto se usó');return false;}
+    if(c>stock+0.004){avisar(`Solo hay ${stock} ${it.unidad||''}. Revisa la cantidad o registra un ingreso primero.`);return false;}
+    const nom=$('#mv_pac').value.trim(),pt=nom?datos.pacientes.find(x=>(x.nombre||'').trim().toLowerCase()===nom.toLowerCase()):null;
+    it.movimientos=it.movimientos||[];
+    it.movimientos.push({id:uid(),tipo:'salida',fecha:$('#mv_fecha').value||hoy(),cantidad:c,motivo:$('#mv_motivo').value.trim(),
+      pacienteId:pt?pt.id:null,pacienteNombre:pt?pt.nombre:nom});
+    it.cantidad=numInv(stock-c);
+    guardar();renderInventario();avisar(`Descargado: ${c} ${it.unidad||''} de ${it.nombre}`);
+  });
+  const ok=$('#mOk');if(ok)ok.textContent='Descargar';
+  setTimeout(()=>{const i=document.getElementById('mv_cant');if(i)i.focus();},50);
+}
+function ingresarMaterial(id){
+  const it=itemInv(id);if(!it)return;
+  const stock=numInv(it.cantidad);
+  abrirModal('Ingresar material',`
+    <p style="margin-top:0"><b>${esc(it.nombre)}</b> · hay <b>${esc(stock)} ${esc(it.unidad||'')}</b></p>
+    <div class="grid">
+      <label class="campo"><span>Cantidad que ingresa</span><input type="number" step="0.01" min="0" id="mv_cant" inputmode="decimal"></label>
+      <label class="campo"><span>Fecha</span><input type="date" id="mv_fecha" value="${hoy()}"></label>
+      <label class="campo"><span>Proveedor (opcional)</span><input type="text" id="mv_prov"></label>
+      <label class="campo"><span>Nuevo lote (opcional)</span><input type="text" id="mv_lote" value=""></label>
+      <label class="campo"><span>Nueva fecha de vencimiento (opcional)</span><input type="date" id="mv_venc" value=""></label>
+    </div>`,
+  ()=>{
+    const c=numInv($('#mv_cant').value);
+    if(c<=0){avisar('Escribe la cantidad que ingresa');return false;}
+    const lote=$('#mv_lote').value.trim(),venc=$('#mv_venc').value;
+    it.movimientos=it.movimientos||[];
+    it.movimientos.push({id:uid(),tipo:'entrada',fecha:$('#mv_fecha').value||hoy(),cantidad:c,proveedor:$('#mv_prov').value.trim(),lote});
+    it.cantidad=numInv(stock+c);
+    if(lote)it.lote=lote;if(venc)it.fechaVenc=venc;
+    guardar();renderInventario();avisar(`Ingresado: ${c} ${it.unidad||''} de ${it.nombre}`);
+  });
+  const ok=$('#mOk');if(ok)ok.textContent='Ingresar';
+}
+function historialMaterial(id){
+  const it=itemInv(id);if(!it)return;
+  const movs=[...(it.movimientos||[])].sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  const usado=movs.filter(m=>m.tipo==='salida').reduce((x,m)=>x+numInv(m.cantidad),0);
+  abrirModal(`Historial · ${it.nombre}`,`
+    <p class="mini" style="margin-top:0">Hay ${esc(numInv(it.cantidad))} ${esc(it.unidad||'')} · usado en total: ${esc(numInv(usado))} ${esc(it.unidad||'')}</p>
+    ${movs.length?`<table style="width:100%"><thead><tr><th>Fecha</th><th>Movimiento</th><th>Detalle</th><th class="der">Cantidad</th><th></th></tr></thead><tbody>
+      ${movs.map(m=>`<tr><td class="num">${fechaCorta(m.fecha)}</td><td>${m.tipo==='salida'?'Descarga (uso)':'Ingreso'}</td>
+        <td class="mini">${m.tipo==='salida'?[m.pacienteNombre,m.motivo].filter(Boolean).map(esc).join(' · '):[m.proveedor,m.lote?'Lote '+m.lote:''].filter(Boolean).map(esc).join(' · ')}</td>
+        <td class="der num" style="color:${m.tipo==='salida'?'var(--alerta)':'var(--clinico)'}">${m.tipo==='salida'?'−':'+'}${esc(numInv(m.cantidad))}</td>
+        <td class="der"><button class="btn chico peligro" onclick="borrarMovimientoInv('${it.id}','${m.id}')" title="Anular">×</button></td></tr>`).join('')}</tbody></table>`
+      :'<p class="mini">Todavía no hay descargas ni ingresos de este producto.</p>'}`);
+}
+function borrarMovimientoInv(itemId,movId){
+  const it=itemInv(itemId);if(!it)return;
+  const m=(it.movimientos||[]).find(x=>x.id===movId);if(!m)return;
+  if(!confirm(`¿Anular este ${m.tipo==='salida'?'uso':'ingreso'} de ${numInv(m.cantidad)} ${it.unidad||''}? La cantidad del producto se corrige sola.`))return;
+  const nueva=numInv(it.cantidad)+(m.tipo==='salida'?1:-1)*numInv(m.cantidad);
+  it.cantidad=numInv(Math.max(0,nueva));
+  it.movimientos=it.movimientos.filter(x=>x.id!==movId);
+  guardar();renderInventario();historialMaterial(itemId);avisar('Movimiento anulado');
+}
+function usoRecienteHTML(){
+  const desde=addDias(hoy(),-30),filas=[];
+  (datos.inventario||[]).forEach(it=>(it.movimientos||[]).forEach(m=>{if(m.tipo==='salida'&&(m.fecha||'')>=desde)filas.push({it,m});}));
+  if(!filas.length)return '';
+  filas.sort((a,b)=>(b.m.fecha||'').localeCompare(a.m.fecha||''));
+  const porProd={};filas.forEach(({it,m})=>{const k=it.nombre+(it.unidad?' ('+it.unidad+')':'');porProd[k]=numInv((porProd[k]||0)+numInv(m.cantidad));});
+  return `<div class="panel-2col" style="margin-bottom:14px">
+    <div class="bloque" style="margin-bottom:0"><div class="barra-tit"><h3>Material usado · últimos 30 días</h3></div>${filasBarras(porProd,v=>v)}</div>
+    <div class="bloque" style="margin-bottom:0"><div class="barra-tit"><h3>Últimas descargas</h3></div>
+      <table style="width:100%">${filas.slice(0,12).map(({it,m})=>`<tr><td class="num mini">${fechaCorta(m.fecha)}</td><td>${esc(it.nombre)}<br><span class="mini">${[m.pacienteNombre,m.motivo].filter(Boolean).map(esc).join(' · ')}</span></td><td class="der num">−${esc(numInv(m.cantidad))} ${esc(it.unidad||'')}</td></tr>`).join('')}</table></div>
+  </div>`;
+}
+function abrirItemInventario(e){var a,o;const t=e?datos.inventario.find(n=>n.id===e):{nombre:"",lote:"",fechaVenc:"",cantidad:"",unidad:"unidades",stockMinimo:""};if(abrirModal(e?"Editar producto":"Nuevo producto",`
     <label class="campo"><span>Nombre</span><input type="text" id="iv_nombre" value="${esc(t.nombre||"")}" placeholder="Anestesia Lidocaína 2%"></label>
     <div class="grid">
       <label class="campo"><span>Lote</span><input type="text" id="iv_lote" value="${esc(t.lote||"")}"></label>
@@ -1400,7 +1494,7 @@ function opcionesProfesionales(e){return'<option value="">— Sin asignar —</o
       <label class="campo"><span>Unidad</span><input type="text" id="iv_unidad" value="${esc(t.unidad||"unidades")}"></label>
       <label class="campo"><span>Stock mínimo (alerta)</span><input type="number" step="0.01" min="0" id="iv_min" value="${(o=t.stockMinimo)!=null?o:""}"></label>
     </div>
-    ${e?'<button class="btn peligro chico" type="button" id="iv_borrar">Eliminar producto</button>':""}`,()=>{const n=$("#iv_nombre").value.trim();if(!n)return avisar("Escribe el nombre del producto"),!1;const i={id:t.id||uid(),nombre:n,lote:$("#iv_lote").value.trim(),fechaVenc:$("#iv_venc").value,cantidad:$("#iv_cant").value,unidad:$("#iv_unidad").value.trim()||"unidades",stockMinimo:$("#iv_min").value};datos.inventario=datos.inventario||[];const s=datos.inventario.findIndex(r=>r.id===i.id);s>=0?datos.inventario[s]=i:datos.inventario.push(i),guardar(),renderInventario(),avisar("Producto guardado")}),e){const n=document.getElementById("iv_borrar");n&&(n.onclick=()=>{confirm("¿Eliminar este producto del inventario?")&&(datos.inventario=datos.inventario.filter(i=>i.id!==e),guardar(),$("#modal").close(),renderInventario())})}}function citasPorRecordar(){const e=addDias(hoy(),1),t=addDias(hoy(),2);return(datos.citas||[]).filter(a=>(a.fecha===e||a.fecha===t)&&(a.estado==="Agendada"||a.estado==="Confirmada")).sort((a,o)=>(a.fecha+a.hora).localeCompare(o.fecha+o.hora))}function telefonoDeCita(e){const t=e.pacienteId?pac(e.pacienteId):null;return e.telefono||t&&t.telefono||""}function pendientesDeRecordar(){return citasPorRecordar().filter(e=>!e.recordatorioEnviado&&telWhatsapp(telefonoDeCita(e)))}function listaRecordatoriosHTML(){const e=citasPorRecordar();if(!e.length)return'<p class="mini" style="margin:0">No hay citas para mañana ni pasado mañana.</p>';const t=addDias(hoy(),1);return e.map(a=>{const o=telefonoDeCita(a),n=!!telWhatsapp(o),i=(a.fecha===t?"Mañana":"Pasado mañana")+" · "+esc(a.hora),s=a.recordatorioEnviado?'<span class="mini" style="color:var(--clinico)">✓ Recordatorio enviado</span>':"",r=n?`<button class="btn chico ${a.recordatorioEnviado?"":"primario"}" onclick="enviarRecordatorioCita('${a.id}')">${a.recordatorioEnviado?"Enviar de nuevo":"Enviar recordatorio"}</button>`:`<span class="mini" style="color:var(--alerta)">Sin teléfono</span> <button class="btn chico" onclick="abrirCita('${a.id}')">Agregar</button>`;return`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--linea)">
+    ${e?'<button class="btn peligro chico" type="button" id="iv_borrar">Eliminar producto</button>':""}`,()=>{const n=$("#iv_nombre").value.trim();if(!n)return avisar("Escribe el nombre del producto"),!1;const i={id:t.id||uid(),nombre:n,lote:$("#iv_lote").value.trim(),fechaVenc:$("#iv_venc").value,cantidad:$("#iv_cant").value,unidad:$("#iv_unidad").value.trim()||"unidades",stockMinimo:$("#iv_min").value,movimientos:t.movimientos||[]};datos.inventario=datos.inventario||[];const s=datos.inventario.findIndex(r=>r.id===i.id);s>=0?datos.inventario[s]=i:datos.inventario.push(i),guardar(),renderInventario(),avisar("Producto guardado")}),e){const n=document.getElementById("iv_borrar");n&&(n.onclick=()=>{confirm("¿Eliminar este producto del inventario?")&&(datos.inventario=datos.inventario.filter(i=>i.id!==e),guardar(),$("#modal").close(),renderInventario())})}}function citasPorRecordar(){const e=addDias(hoy(),1),t=addDias(hoy(),2);return(datos.citas||[]).filter(a=>(a.fecha===e||a.fecha===t)&&(a.estado==="Agendada"||a.estado==="Confirmada")).sort((a,o)=>(a.fecha+a.hora).localeCompare(o.fecha+o.hora))}function telefonoDeCita(e){const t=e.pacienteId?pac(e.pacienteId):null;return e.telefono||t&&t.telefono||""}function pendientesDeRecordar(){return citasPorRecordar().filter(e=>!e.recordatorioEnviado&&telWhatsapp(telefonoDeCita(e)))}function listaRecordatoriosHTML(){const e=citasPorRecordar();if(!e.length)return'<p class="mini" style="margin:0">No hay citas para mañana ni pasado mañana.</p>';const t=addDias(hoy(),1);return e.map(a=>{const o=telefonoDeCita(a),n=!!telWhatsapp(o),i=(a.fecha===t?"Mañana":"Pasado mañana")+" · "+esc(a.hora),s=a.recordatorioEnviado?'<span class="mini" style="color:var(--clinico)">✓ Recordatorio enviado</span>':"",r=n?`<button class="btn chico ${a.recordatorioEnviado?"":"primario"}" onclick="enviarRecordatorioCita('${a.id}')">${a.recordatorioEnviado?"Enviar de nuevo":"Enviar recordatorio"}</button>`:`<span class="mini" style="color:var(--alerta)">Sin teléfono</span> <button class="btn chico" onclick="abrirCita('${a.id}')">Agregar</button>`;return`<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--linea)">
       <div><b>${esc(a.nombre)}</b> <span class="mini">${i}${a.motivo?" · "+esc(a.motivo):""}</span> ${s}</div>
       <div style="display:flex;gap:6px;align-items:center">${r}</div></div>`}).join("")}function verTodosControles(){const e=hoy(),t=datos.pacientes.map(a=>({p:a,up:ultimaProfilaxis(a)})).filter(a=>a.up).map(a=>({...a,venc:sumarMeses(a.up,mesesControl(a.p))})).sort((a,o)=>a.venc.localeCompare(o.venc));abrirModal("Controles de limpieza — todos",`<p class="mini" style="margin-top:0">Pacientes con una limpieza o profilaxis registrada, ordenados por la fecha en que les toca el próximo control (cada ${mesesControl()} meses, ${mesesControlOrto()} si usa ortodoncia).</p>
     ${t.length?`<div style="max-height:60vh;overflow:auto">${t.map(a=>{const o=diasEntre(e,a.venc),n=tieneCitaFutura(a.p),i=n?'<span class="mini" style="color:var(--clinico)">Ya tiene cita</span>':o<0?`<span class="mini" style="color:var(--alerta)">Vencido hace ${-o} d</span>`:`<span class="mini">En ${o} d</span>`;return`<div style="display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:7px 0;border-bottom:1px solid var(--linea)">
