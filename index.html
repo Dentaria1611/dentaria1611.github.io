@@ -298,6 +298,61 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
 .ing-f.pago{grid-template-columns:1fr auto}
 .ing-f.pago span small{display:block;color:var(--suave);font-size:12px}
 @media (max-width:420px){.ing-f{grid-template-columns:70px 1fr 66px}.ing-seg{margin:14px 14px 0}.ing-total,.ing-filas{padding-left:14px;padding-right:14px}}
+/* novedades: bento con demos que se pueden tocar (cifras de ejemplo, no guarda nada) */
+.novedades{background:linear-gradient(180deg,#fff,var(--agua))}
+.punto-vivo{width:8px;height:8px;border-radius:50%;background:var(--wa);box-shadow:0 0 0 0 rgba(31,168,85,.6);animation:vivo 1.8s infinite}
+@keyframes vivo{0%{box-shadow:0 0 0 0 rgba(31,168,85,.55)}70%{box-shadow:0 0 0 8px rgba(31,168,85,0)}100%{box-shadow:0 0 0 0 rgba(31,168,85,0)}}
+.bento{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:stretch}
+.nv{position:relative;background:#fff;border:1px solid var(--linea);border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;box-shadow:0 20px 40px -30px rgba(4,36,58,.35);transition:transform .25s,box-shadow .25s,border-color .25s}
+.nv:hover{transform:translateY(-3px);box-shadow:0 30px 50px -28px rgba(4,36,58,.45);border-color:#B9DCF0}
+.nv h3{font-size:clamp(21px,2.2vw,26px)}
+.nv>p{color:var(--suave);font-size:15.5px}
+.nv-grande{grid-row:span 2}.nv-link{grid-column:1/-1}.nv-grande .nv-demo{flex:1;display:flex;flex-direction:column}.nv-grande .nv-nota{margin-top:auto;padding-top:8px}
+.nv-tag{align-self:flex-start;font-size:12.5px;font-weight:800;letter-spacing:.02em;color:var(--hondo);background:var(--agua);border-radius:999px;padding:5px 11px}
+.nv-demo{margin-top:6px;background:var(--agua);border-radius:18px;padding:14px}
+.nv-nota{display:block;font-size:12px;color:#7A92A3;margin-top:8px}
+.nv-link{background:linear-gradient(140deg,var(--noche),var(--hondo));color:#fff;border-color:transparent}
+.nv-link>p{color:#C9E7F8}.nv-link .nv-tag{background:rgba(255,255,255,.14);color:#fff}
+.nv-ir{margin-top:auto;font-weight:800;color:var(--celeste)}
+.nv-link:hover .nv-ir span{display:inline-block;transform:translateX(4px)}
+.nv-ir span{transition:transform .2s}
+.prod-pros{display:flex;gap:6px;flex-wrap:wrap}
+.prod-pros button{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:6px 12px 6px 6px;font:700 13.5px/1 'Plus Jakarta Sans',sans-serif;color:var(--suave);cursor:pointer;transition:border-color .2s,color .2s,background .2s;min-height:40px}
+.prod-pros button[aria-selected=true]{border-color:var(--hondo);color:var(--hondo);background:#fff;box-shadow:0 4px 12px -6px rgba(3,105,161,.6)}
+.prod-pros .ini{width:28px;height:28px;border-radius:50%;background:var(--claro);color:var(--noche);display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800}
+.prod-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.prod-kpis div{background:#fff;border-radius:14px;padding:10px 12px;min-width:0}
+.prod-kpis span{display:block;font-size:12px;color:var(--suave);font-weight:600}
+.prod-kpis b{display:block;font-size:clamp(17px,2vw,22px);font-variant-numeric:tabular-nums;color:var(--noche);letter-spacing:-.02em}
+.prod-kpis b.rojo{color:#B91C1C}
+.prod-lista{list-style:none;margin:0;padding:0;background:#fff;border-radius:14px;overflow:hidden}
+.prod-lista li{display:grid;grid-template-columns:52px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #EEF3F7;font-size:13.5px;animation:entra .4s both}
+.prod-lista li:last-child{border-bottom:0}
+.prod-lista li span{color:var(--suave);font-size:12.5px;font-variant-numeric:tabular-nums}
+.prod-lista li small{display:block;color:var(--suave);font-size:12px}
+.prod-lista li b{font-variant-numeric:tabular-nums}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.mat-fila{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mat-fila b{display:block;font-size:14.5px}.mat-fila span{font-size:13px;color:var(--suave);font-variant-numeric:tabular-nums}
+.mat-btn{min-height:40px;padding:0 16px;border-radius:999px;border:0;background:var(--hondo);color:#fff;font:700 14px/1 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:transform .12s,background .2s;white-space:nowrap}
+.mat-btn:active{transform:scale(.95)}
+.mat-barra{height:10px;border-radius:5px;background:#D6E8F3;margin-top:12px;overflow:hidden}
+.mat-barra i{display:block;height:100%;width:100%;border-radius:5px;background:linear-gradient(90deg,var(--celeste),var(--hondo));transition:width .4s cubic-bezier(.2,.8,.2,1),background .3s}
+.mat-barra i.bajo{background:linear-gradient(90deg,#F59E0B,#DC2626)}
+.mat-aviso{min-height:20px;margin-top:8px;font-size:13px;font-weight:700;color:#B91C1C}
+.abo-cab{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;background:#fff;border:0;border-radius:14px;padding:12px 14px;cursor:pointer;font:inherit;color:inherit}
+.abo-cab b{display:block;font-size:14.5px}.abo-cab small{display:block;font-size:12.5px;color:var(--hondo);font-weight:600}
+.abo-total{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.abo-total em{display:block;font-style:normal;font-size:12px;color:var(--ok)}
+.abo-lista{list-style:none;margin:0;padding:0 6px;max-height:0;overflow:hidden;transition:max-height .35s ease}
+.abo-demo.abierto .abo-lista{max-height:200px}
+.abo-lista li{display:flex;justify-content:space-between;padding:9px 8px;border-bottom:1px dashed #C8DDEA;font-size:13.5px;color:var(--suave)}
+.abo-lista li b{color:var(--ok);font-variant-numeric:tabular-nums}
+.revela{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.revela.visto{opacity:1;transform:none}
+@media (max-width:900px){.bento{grid-template-columns:1fr}.nv-grande{grid-row:auto}.nv-link{grid-column:auto}}
+@media (max-width:420px){.nv{padding:20px}.prod-kpis{grid-template-columns:1fr 1fr}.prod-kpis div:last-child{grid-column:span 2}.prod-lista li{grid-template-columns:44px 1fr auto}}
+@media (prefers-reduced-motion:reduce){.punto-vivo,.prod-lista li{animation:none}.revela{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -385,6 +440,78 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
     <span class="mod"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4z M4 8l8 4 8-4M12 12v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Inventario y gastos</span>
   </div>
 </div>
+
+<section id="novedades" class="novedades">
+  <div class="env">
+    <div class="cab-sec">
+      <span class="etq"><span class="punto-vivo" aria-hidden="true"></span>Nuevo en Dentaria</span>
+      <h2>Lo nuevo que ya puedes usar.</h2>
+      <p>Lo último que agregamos a la app. Toca cada tarjeta y pruébalo.</p>
+    </div>
+    <div class="bento">
+
+      <article class="nv nv-grande revela">
+        <span class="nv-tag">Profesionales</span>
+        <h3>Producción de cada profesional</h3>
+        <p>Cuánto produjo cada especialista por día, semana, mes o semestre, con cada procedimiento que realizó, lo cobrado y los honorarios que le debes.</p>
+        <div class="nv-demo prod-demo" id="prodDemo">
+          <div class="prod-pros" role="tablist" aria-label="Profesional">
+            <button type="button" role="tab" data-i="0" aria-selected="true"><span class="ini">AR</span>Endodoncia</button>
+            <button type="button" role="tab" data-i="1" aria-selected="false"><span class="ini">LP</span>Ortodoncia</button>
+            <button type="button" role="tab" data-i="2" aria-selected="false"><span class="ini">MC</span>Cirugía</button>
+          </div>
+          <div class="prod-kpis">
+            <div><span>Producción del mes</span><b id="pdProd">$0,00</b></div>
+            <div><span>Cobrado</span><b id="pdCob">$0,00</b></div>
+            <div><span>Le debes</span><b id="pdDeb" class="rojo">$0,00</b></div>
+          </div>
+          <ul class="prod-lista" id="pdLista" aria-live="polite"></ul>
+          <span class="nv-nota">Cifras de ejemplo.</span>
+        </div>
+      </article>
+
+      <article class="nv revela">
+        <span class="nv-tag">Inventario</span>
+        <h3>Uso de material</h3>
+        <p>Descarga lo que usas en cada paciente y el stock baja solo. Te avisa cuando queda poco.</p>
+        <div class="nv-demo mat-demo">
+          <div class="mat-fila">
+            <div><b>Anestesia lidocaína 2%</b><span id="matTxt">10 cartuchos</span></div>
+            <button type="button" class="mat-btn" id="matUsar">Usar 1</button>
+          </div>
+          <div class="mat-barra" aria-hidden="true"><i id="matBar"></i></div>
+          <p class="mat-aviso" id="matAviso" aria-live="polite"></p>
+          <span class="nv-nota">Demostración: no guarda nada.</span>
+        </div>
+      </article>
+
+      <article class="nv revela">
+        <span class="nv-tag">Cobros</span>
+        <h3>Abonos bajo cada tratamiento</h3>
+        <p>Cada tratamiento muestra sus abonos, uno por uno, y todos los procedimientos de la sesión.</p>
+        <div class="nv-demo abo-demo">
+          <button type="button" class="abo-cab" id="aboCab" aria-expanded="false">
+            <span><b>Corona — piezas 21 y 22</b><small id="aboRes">3 abonos · toca para ver</small></span>
+            <span class="abo-total">$640,00 <em>Pagado</em></span>
+          </button>
+          <ul class="abo-lista" id="aboLista">
+            <li><span>24/09 · Efectivo</span><b>$200,00</b></li>
+            <li><span>08/10 · Transferencia</span><b>$200,00</b></li>
+            <li><span>03/11 · Efectivo</span><b>$240,00</b></li>
+          </ul>
+        </div>
+      </article>
+
+      <a class="nv nv-link revela" href="#ingDemo">
+        <span class="nv-tag">Reportes</span>
+        <h3>Ingresos por día, semana, mes y semestre</h3>
+        <p>Compara con el período anterior, imprime el reporte o descarga los pagos.</p>
+        <span class="nv-ir">Probar el reporte <span aria-hidden="true">→</span></span>
+      </a>
+
+    </div>
+  </div>
+</section>
 
 <section id="funciones">
   <div class="env">
@@ -806,6 +933,43 @@ document.querySelectorAll('.arcada').forEach(a=>a.addEventListener('click',ev=>{
   }
   caja.querySelectorAll('.ing-seg button').forEach(b=>b.addEventListener('click',()=>ver(b.dataset.p)));
   ver('semana');
+})();
+/* novedades: demos de juguete (cifras de ejemplo; no se conectan a nada) */
+(function(){
+  const fmt=n=>'$'+n.toFixed(2).replace('.',',');
+  // aparecen al bajar
+  const rv=document.querySelectorAll('.revela');
+  if('IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visto');io.unobserve(e.target);}}),{threshold:.15});
+    rv.forEach((x,i)=>{x.style.transitionDelay=(i%4)*80+'ms';io.observe(x);});
+  }else rv.forEach(x=>x.classList.add('visto'));
+  // producción por profesional
+  const P=[
+    {prod:480,cob:380,deb:60,l:[['03/11','Endodoncia — piezas 21 y 22','Paciente A',300],['05/11','Endodoncia — pieza 14','Paciente B',180]]},
+    {prod:350,cob:350,deb:15,l:[['02/11','Control — cambio de arco','Paciente C',50],['04/11','Cementado de brackets','Paciente D',250],['05/11','Control de ortodoncia','Paciente E',50]]},
+    {prod:220,cob:120,deb:40,l:[['01/11','Exodoncia — pieza 38','Paciente F',120],['04/11','Frenectomía','Paciente G',100]]}];
+  const box=document.getElementById('prodDemo');
+  if(box){
+    const quieto=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const anim=(el,to)=>{if(quieto){el.textContent=fmt(to);return;}const from=Number(el.dataset.v||0),t0=performance.now();el.dataset.v=to;
+      const paso=t=>{const k=Math.min(1,(t-t0)/500),e=1-Math.pow(1-k,3);el.textContent=fmt(from+(to-from)*e);if(k<1)requestAnimationFrame(paso);};requestAnimationFrame(paso);};
+    const ver=i=>{const d=P[i];
+      box.querySelectorAll('.prod-pros button').forEach(b=>b.setAttribute('aria-selected',b.dataset.i==i));
+      anim(document.getElementById('pdProd'),d.prod);anim(document.getElementById('pdCob'),d.cob);anim(document.getElementById('pdDeb'),d.deb);
+      document.getElementById('pdLista').innerHTML=d.l.map((x,k)=>`<li style="animation-delay:${k*70}ms"><span>${x[0]}</span><div>${x[1]}<small>${x[2]}</small></div><b>${fmt(x[3])}</b></li>`).join('');};
+    box.querySelectorAll('.prod-pros button').forEach(b=>b.addEventListener('click',()=>ver(Number(b.dataset.i))));
+    ver(0);
+  }
+  // uso de material
+  const btn=document.getElementById('matUsar');
+  if(btn){let n=10;const MIN=3,txt=document.getElementById('matTxt'),bar=document.getElementById('matBar'),av=document.getElementById('matAviso');
+    const pinta=()=>{txt.textContent=n+(n===1?' cartucho':' cartuchos');bar.style.width=(n*10)+'%';bar.classList.toggle('bajo',n<=MIN);
+      av.textContent=n===0?'Se acabó: registra un ingreso.':n<=MIN?'Stock bajo: quedan '+n+'.':'';btn.textContent=n===0?'Reponer 10':'Usar 1';};
+    btn.addEventListener('click',()=>{n=n===0?10:n-1;pinta();});pinta();}
+  // abonos bajo el tratamiento
+  const cab=document.getElementById('aboCab');
+  if(cab)cab.addEventListener('click',()=>{const d=cab.closest('.abo-demo'),ab=!d.classList.contains('abierto');d.classList.toggle('abierto',ab);cab.setAttribute('aria-expanded',ab);
+    document.getElementById('aboRes').textContent=ab?'3 abonos':'3 abonos · toca para ver';});
 })();
 </script>
 </body>
