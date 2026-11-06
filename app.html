@@ -824,7 +824,7 @@ ${textoRepartoOrto(o,repartoPagoOrto(o,N,O))}
     <span class="cacc">${l>.004?`<button class="btn chico" type="button" onclick="event.stopPropagation();registrarPagoFilaOrto('${t.id}')">Pagar</button>`:""}<button class="btn-mas" type="button" title="Más opciones" aria-label="Más opciones" onclick="menuFilaOrto(event,'${t.id}')">⋯</button></span>
   </div>`}function cerrarMenuFila(){const e=document.getElementById("menuFila");e&&e.remove()}function menuFilaOrto(e,t){e.stopPropagation(),cerrarMenuFila();const a=pac(selId).orto,o=(a.cuotas||[]).find(c=>c.id===t);if(!o)return;const n=esProcOrto(o)&&(a.procedimientos||[]).find(c=>c.id===o.procId),i=[[n?"Editar procedimiento":"Editar valor, fecha y pagos",()=>n?editarProcOrto(n.id):editarCuotaOrto(t)]];n&&i.push(["Ver pagos",()=>editarCuotaOrto(t)]),saldoFila(o)>.004&&i.push(["Registrar pago",()=>registrarPagoFilaOrto(t)]),i.push(["Eliminar",()=>eliminarFilaOrto(t),!0]);const s=document.createElement("div");s.className="menu-fila",s.id="menuFila",s.innerHTML=i.map((c,l)=>`<button type="button" data-i="${l}"${c[2]?' class="peligro"':""}>${c[0]}</button>`).join(""),document.body.appendChild(s);const r=e.currentTarget.getBoundingClientRect();s.style.top=r.bottom+window.scrollY+4+"px",s.style.left=Math.max(8,Math.min(r.right+window.scrollX-s.offsetWidth,window.scrollX+document.documentElement.clientWidth-s.offsetWidth-8))+"px",s.querySelectorAll("button").forEach(c=>c.onclick=l=>{l.stopPropagation(),cerrarMenuFila(),i[+c.dataset.i][1]()}),setTimeout(()=>document.addEventListener("click",cerrarMenuFila,{once:!0}),0)}function eliminarFilaOrto(e){const t=pac(selId),a=t.orto,o=(a.cuotas||[]).find(r=>r.id===e);if(!o)return;const n=pagadoFila(o),i=etiquetaFilaOrto(a,o),s=new Date().toISOString();if(esProcOrto(o)){const r=(a.procedimientos||[]).find(c=>c.id===o.procId);r&&borrarProcOrto(r.id);return}if(esSinAsignarOrto(o)){if(!confirm(`¿Eliminar este pago de ${usd(n)}?
 
-No se borra del todo: queda en el historial como anulado y deja de sumar a lo pagado.`))return;pagosActivosFila(o).forEach(r=>{r.anulado=!0,r.anuladoFecha=s,r.anuladoMotivo="Eliminado"}),o.anulada=!0,registrarHistorialOrto(o,"Pago eliminado"),actualizarFilaOrto(o)}else{const r=o.controlId&&(a.controles||[]).find(l=>l.id===o.controlId);let c=`¿Eliminar «${i}»?`;if(r&&(c+=`
+No se borra del todo: queda en el historial como anulado y deja de sumar a lo pagado.`))return;pagosActivosFila(o).forEach(r=>{registrarPagoEliminadoOrto(a,o,r,"Eliminado"),r.anulado=!0,r.anuladoFecha=s,r.anuladoMotivo="Eliminado"}),o.anulada=!0,registrarHistorialOrto(o,"Pago eliminado"),actualizarFilaOrto(o)}else{const r=o.controlId&&(a.controles||[]).find(l=>l.id===o.controlId);let c=`¿Eliminar «${i}»?`;if(r&&(c+=`
 
 También se elimina lo registrado en ese control${r.procedimiento?" ("+r.procedimiento+")":""}.`),n>.004&&(c+=`
 
@@ -834,12 +834,24 @@ Si luego usas «Regenerar cronograma», esta fila vuelve a aparecer según el Pl
 
 • Se vuelven a crear las cuotas y los controles de cada etapa.
 • Se quitan las filas pendientes sin pagos (también las cuotas que agregaste a mano y las que eliminaste).
-• Lo pagado y los controles registrados se conservan y se vuelven a acomodar en orden.`))return;const a=new Set(etapasOrto(t).map(o=>o.id));t.cuotas=t.cuotas.filter(o=>esProcOrto(o)||esSinAsignarOrto(o)&&pagadoFila(o)>.004||pagadoFila(o)>.004),t.cuotas.forEach(o=>{!esProcOrto(o)&&!esSinAsignarOrto(o)&&o.anulada&&pagadoFila(o)>.004&&(o.anulada=!1)}),(t.controles||[]).forEach(o=>{o.etapaId&&!a.has(o.etapaId)&&(o.etapaId=etapaActualOrto(t).id)}),sincronizarCronogramaOrto(t),vincularControlesOrto(t),guardar(),pintarVista(),avisar("Cronograma regenerado")}function historialPagosOrtoHTML(e,t){const a=[];if((e.cuotas||[]).forEach(i=>pagosDeFila(i).forEach(s=>a.push({x:s,q:i}))),!a.length)return"";const o=new Map;a.forEach(i=>{const s=i.x.grupo||i.x.id;o.has(s)||o.set(s,[]),o.get(s).push(i)});const n=[...o.values()].sort((i,s)=>(s[0].x.fecha||"").localeCompare(i[0].x.fecha||""));return`<details class="historial-pagos"><summary>Historial de pagos (${n.length})</summary>
-    <table><thead><tr><th>Fecha</th><th>Aplicado a</th><th>Forma</th><th class="der">Monto</th></tr></thead><tbody>
-    ${n.map(i=>{const s=i[0].x,r=i.every(l=>l.x.anulado),c=R2(i.reduce((l,d)=>l+(Number(d.x.monto)||0),0));return`<tr class="${r?"anulado":""}"><td class="num">${fechaCorta(s.fecha)}</td>
-        <td>${i.map(l=>esc(etiquetaFilaOrto(e,l.q,t))+(i.length>1?" "+usd(l.x.monto):"")).join("<br>")}${s.libre?'<br><span class="mini">Pago repartido en cuotas pendientes</span>':""}${s.nota?`<br><span class="mini">${esc(s.nota)}</span>`:""}${r?`<br><span class="mini">Anulado${s.anuladoMotivo?": "+esc(s.anuladoMotivo):""}</span>`:""}</td>
-        <td>${esc(s.metodo||"—")}</td><td class="der">${usd(c)}</td></tr>`}).join("")}
-    </tbody></table></details>`}const METODOS_PAGO=["Efectivo","Transferencia","Tarjeta","Otro"];function camposPagoOrto(e,t){return`<div class="grid">
+• Lo pagado y los controles registrados se conservan y se vuelven a acomodar en orden.`))return;const a=new Set(etapasOrto(t).map(o=>o.id));t.cuotas=t.cuotas.filter(o=>esProcOrto(o)||esSinAsignarOrto(o)&&pagadoFila(o)>.004||pagadoFila(o)>.004),t.cuotas.forEach(o=>{!esProcOrto(o)&&!esSinAsignarOrto(o)&&o.anulada&&pagadoFila(o)>.004&&(o.anulada=!1)}),(t.controles||[]).forEach(o=>{o.etapaId&&!a.has(o.etapaId)&&(o.etapaId=etapaActualOrto(t).id)}),sincronizarCronogramaOrto(t),vincularControlesOrto(t),guardar(),pintarVista(),avisar("Cronograma regenerado")}/* Registro de pagos eliminados o anulados: se guarda aparte (o.pagosEliminados), así queda aunque luego se regenere el
+   cronograma. Solo se anotan las eliminaciones hechas por una persona (no los movimientos internos entre cuotas). */
+const PAGOS_ELIMINADOS_DESDE='2026-11-07';   // lo de antes de esta fecha (la limpieza de cuotas repetidas) no se muestra
+function registrarPagoEliminadoOrto(o,q,x,motivo){
+  (o.pagosEliminados=o.pagosEliminados||[]).push({id:uid(),eliminadoEl:hoy(),fecha:x.fecha||'',monto:Number(x.monto)||0,
+    metodo:x.metodo||'',aplicadoA:etiquetaFilaOrto(o,q),motivo:motivo||'Eliminado'});
+}
+function historialPagosOrtoHTML(o){
+  const lista=(o.pagosEliminados||[]).filter(e=>(e.eliminadoEl||'')>=PAGOS_ELIMINADOS_DESDE).sort((a,b)=>(b.eliminadoEl||'').localeCompare(a.eliminadoEl||''));
+  if(!lista.length)return '';
+  return `<details class="historial-pagos"><summary>Pagos eliminados (${lista.length})</summary>
+    <p class="mini" style="margin:4px 0">Cada pago que se elimina o anula queda anotado aquí, con quién lo tenía y por qué.</p>
+    <table><thead><tr><th>Eliminado el</th><th>Pago del</th><th>Era de</th><th>Forma</th><th>Motivo</th><th class="der">Monto</th></tr></thead><tbody>
+    ${lista.map(e=>`<tr class="anulado"><td class="num">${fechaCorta(e.eliminadoEl)}</td><td class="num">${fechaCorta(e.fecha)||'—'}</td>
+      <td>${esc(e.aplicadoA||'')}</td><td>${esc(e.metodo||'—')}</td><td>${esc(e.motivo||'')}</td><td class="der">${usd(e.monto)}</td></tr>`).join('')}
+    </tbody></table></details>`;
+}
+const METODOS_PAGO=["Efectivo","Transferencia","Tarjeta","Otro"];function camposPagoOrto(e,t){return`<div class="grid">
       <label class="campo"><span>Monto (USD)</span><input type="number" step="0.01" min="0" id="${e}_monto" value="${t>0?R2(t):""}"></label>
       <label class="campo"><span>Fecha</span><input type="date" id="${e}_fecha" value="${hoy()}"></label>
       <label class="campo"><span>Forma de pago</span><select id="${e}_metodo">${METODOS_PAGO.map(a=>`<option>${a}</option>`).join("")}</select></label>
@@ -871,7 +883,7 @@ ${textoRepartoOrto(t,n)}
 
 Se repartió en `+i.length+" filas: se anula completo.":""}
 
-No se borra: queda en el historial como anulado.`))return;const r=(prompt("Motivo de la anulación (opcional):","Registrado por error")||"").trim(),c=new Date().toISOString();i.forEach(({k:l,y:d})=>{d.anulado=!0,d.anuladoFecha=c,r&&(d.anuladoMotivo=r),registrarHistorialOrto(l,"Pago de "+usd(d.monto)+" del "+fechaCorta(d.fecha)+" anulado"+(r?": "+r:"")),actualizarFilaOrto(l)}),guardar(),pintarVista(),editarCuotaOrto(e)}function asignarPagoSueltoOrto(e){const t=pac(selId).orto,a=t.cuotas.find(l=>l.id===e);if(!a)return;const o=pagosActivosFila(a),n=pagadoFila(a);if(n<=0)return;const i=filasConSaldoOrto(t).reduce((l,d)=>l+saldoFila(d),0);if(i<=.004){avisar("No hay cuotas con saldo pendiente");return}const s=repartoPagoOrto(t,Math.min(n,i),null);if(!confirm(`Aplicar ${usd(Math.min(n,i))} de este pago a las cuotas pendientes.
+No se borra: queda en el historial como anulado.`))return;const r=(prompt("Motivo de la anulación (opcional):","Registrado por error")||"").trim(),c=new Date().toISOString();i.forEach(({k:l,y:d})=>{registrarPagoEliminadoOrto(a,l,d,r||"Anulado"),d.anulado=!0,d.anuladoFecha=c,r&&(d.anuladoMotivo=r),registrarHistorialOrto(l,"Pago de "+usd(d.monto)+" del "+fechaCorta(d.fecha)+" anulado"+(r?": "+r:"")),actualizarFilaOrto(l)}),guardar(),pintarVista(),editarCuotaOrto(e)}function asignarPagoSueltoOrto(e){const t=pac(selId).orto,a=t.cuotas.find(l=>l.id===e);if(!a)return;const o=pagosActivosFila(a),n=pagadoFila(a);if(n<=0)return;const i=filasConSaldoOrto(t).reduce((l,d)=>l+saldoFila(d),0);if(i<=.004){avisar("No hay cuotas con saldo pendiente");return}const s=repartoPagoOrto(t,Math.min(n,i),null);if(!confirm(`Aplicar ${usd(Math.min(n,i))} de este pago a las cuotas pendientes.
 
 ${textoRepartoOrto(t,s)}${n>i+.004?`
 
