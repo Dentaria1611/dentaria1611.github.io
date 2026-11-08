@@ -348,6 +348,79 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
 .abo-demo.abierto .abo-lista{max-height:200px}
 .abo-lista li{display:flex;justify-content:space-between;padding:9px 8px;border-bottom:1px dashed #C8DDEA;font-size:13.5px;color:var(--suave)}
 .abo-lista li b{color:var(--ok);font-variant-numeric:tabular-nums}
+/* citas en línea */
+.citas-sec{padding:110px 0;background:radial-gradient(circle at 85% 10%,rgba(56,189,248,.28),rgba(56,189,248,0) 45%),linear-gradient(180deg,#F4FAFE,#fff)}
+.citas-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.citas-sec .etq{background:var(--agua);color:var(--hondo)}
+.citas-sec h2{font-size:clamp(32px,4.4vw,52px);letter-spacing:-.035em;line-height:1.06;margin:16px 0 0}
+.citas-sec .bajada{font-size:19px;color:var(--suave);margin:18px 0 0;max-width:560px}
+.cit-pasos{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:14px;counter-reset:p}
+.cit-pasos li{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;font-size:16.5px;color:var(--tinta)}
+.cit-pasos li::before{counter-increment:p;content:counter(p);width:40px;height:40px;border-radius:12px;background:var(--noche);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.cit-pasos b{display:block}
+.cit-pasos span{color:var(--suave);font-size:15px}
+.cit-acc{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.cit-ver{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 20px;border-radius:999px;border:1.5px solid var(--linea);background:#fff;color:var(--noche);font:700 15px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+.cit-ver:hover{border-color:var(--hondo)}
+.cit-ver i{width:26px;height:26px;border-radius:50%;background:var(--noche);display:flex;align-items:center;justify-content:center}
+.cit-escena{position:relative;display:flex;justify-content:center;min-height:560px}
+.cit-tel{width:300px;border-radius:42px;background:#0B1B26;padding:10px;box-shadow:0 60px 100px -40px rgba(4,36,58,.55)}
+.cit-pant{background:#F3F6F6;border-radius:33px;overflow:hidden;height:560px;display:flex;flex-direction:column;position:relative}
+.cit-top{padding:22px 16px 10px;text-align:center}
+.cit-logo{width:46px;height:46px;border-radius:14px;background:var(--noche);margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.cit-top b{display:block;font-size:15px;color:#16302d}
+.cit-top small{font-size:11.5px;color:#5b6e6b}
+.cit-card{background:#fff;margin:4px 12px 0;border-radius:16px;border:1px solid #d9e3e1;padding:12px;flex:1;display:flex;flex-direction:column;gap:10px}
+.cit-lab{font-size:11px;font-weight:700;color:#5b6e6b;text-transform:uppercase;letter-spacing:.04em}
+.cit-dias{display:flex;gap:6px}
+.cit-dias button{flex:1;border:1px solid #d9e3e1;background:#fff;border-radius:10px;padding:6px 0;font:600 12px 'Plus Jakarta Sans',sans-serif;color:#16302d;cursor:pointer;line-height:1.25}
+.cit-dias button b{display:block;font-size:15px}
+.cit-dias button[aria-pressed=true]{background:#0f7b6c;border-color:#0f7b6c;color:#fff}
+.cit-horas{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cit-horas button{border:1px solid #d9e3e1;background:#fff;border-radius:10px;padding:8px 0;font:600 13px 'Plus Jakarta Sans',sans-serif;color:#16302d;cursor:pointer;line-height:1.1;min-height:40px}
+.cit-horas button small{display:block;font-size:9.5px;font-weight:600}
+.cit-horas button:disabled{background:#eef1f1;color:#9aa6a4;border-style:dashed;cursor:not-allowed}
+.cit-horas button[aria-pressed=true]{background:#0f7b6c;border-color:#0f7b6c;color:#fff}
+.cit-pedir{margin-top:auto;border:0;border-radius:12px;background:#25d366;color:#073b1d;font:800 15px 'Plus Jakarta Sans',sans-serif;padding:13px;cursor:pointer;transition:opacity .2s}
+.cit-pedir:disabled{opacity:.45;cursor:not-allowed}
+.cit-listo{position:absolute;inset:0;background:#F3F6F6;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .35s}
+.cit-listo.ver{opacity:1;pointer-events:auto}
+.cit-listo .ok{width:64px;height:64px;border-radius:50%;background:#dcf5e5;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:12px}
+.cit-listo b{font-size:19px;color:#16302d}
+.cit-listo p{font-size:14px;color:#5b6e6b;margin:8px 0 0}
+.cit-notif{position:absolute;right:-8px;bottom:36px;width:290px;background:#fff;border-radius:18px;box-shadow:0 30px 60px -20px rgba(4,36,58,.45);border:1px solid var(--linea);padding:14px;opacity:0;transform:translateY(16px) scale(.97);pointer-events:none;transition:opacity .4s,transform .45s cubic-bezier(.2,.8,.2,1)}
+.cit-notif.ver{opacity:1;transform:none;pointer-events:auto}
+.cit-notif .cab{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--suave)}
+.cit-notif .cab i{width:22px;height:22px;border-radius:7px;background:var(--noche);display:flex;align-items:center;justify-content:center}
+.cit-notif .cu{margin-top:8px;font-size:14.5px;color:var(--tinta)}
+.cit-notif .cu b{display:block;font-size:15.5px}
+.cit-notif .bts{display:flex;gap:8px;margin-top:10px}
+.cit-notif .bts button{flex:1;min-height:40px;border-radius:10px;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer;border:1.5px solid var(--linea);background:#fff;color:var(--tinta)}
+.cit-notif .bts .si{background:var(--hondo);border-color:var(--hondo);color:#fff}
+.cit-notif .fin{display:none;margin-top:10px;font-weight:700;color:var(--ok);font-size:14.5px}
+.cit-notif.hecho .bts{display:none}.cit-notif.hecho .fin{display:block}
+.cit-otra{margin-top:8px;border:0;background:none;color:var(--hondo);font:700 13.5px 'Plus Jakarta Sans',sans-serif;cursor:pointer;padding:6px 0;text-decoration:underline}
+.cit-video{position:fixed;inset:0;z-index:200;background:rgba(4,20,32,.82);display:none;align-items:center;justify-content:center;padding:20px}
+.cit-video.ver{display:flex}
+.cit-video .marco-video{width:min(340px,82vw,calc((100vh - 120px) * .5625));position:relative}
+.cit-video .cerrar{position:absolute;top:-52px;right:0;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--noche);font-size:22px;cursor:pointer}
+@media (max-width:900px){.citas-grid{grid-template-columns:1fr;gap:40px}.cit-escena{min-height:0;padding-bottom:120px}.cit-notif{right:50%;transform:translate(50%,16px) scale(.97);bottom:0}.cit-notif.ver{transform:translate(50%,0)}}
+@media (max-width:420px){.citas-sec{padding:80px 0}.cit-tel{width:280px}.cit-notif{width:min(300px,calc(100vw - 40px))}}
+/* caja e indicaciones */
+.caja-demo .cj-fila{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--suave)}
+.caja-demo .cj-fila b{color:var(--tinta);font-variant-numeric:tabular-nums}
+.caja-demo .cj-fila.tot{border-top:1px solid var(--linea);margin-top:4px;padding-top:8px}
+.cj-cont{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border-radius:14px;padding:8px 10px;margin-top:10px}
+.cj-cont span{font-size:13px;font-weight:700;color:var(--suave)}
+.cj-step{display:flex;align-items:center;gap:8px}
+.cj-step button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--linea);background:#fff;font:800 18px/1 'Plus Jakarta Sans',sans-serif;color:var(--hondo);cursor:pointer}
+.cj-step b{min-width:74px;text-align:center;font-size:17px;font-variant-numeric:tabular-nums}
+.cj-res{margin:10px 0 0;font-weight:800;font-size:15px;text-align:center;border-radius:12px;padding:8px;transition:background .2s,color .2s}
+.cj-res.cuadra{background:#dcf5e5;color:var(--ok)}.cj-res.falta{background:#fde4e1;color:#B42318}.cj-res.sobra{background:#fff3d6;color:#9A6400}
+.ind-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ind-chips button{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:6px 12px;font:700 13px 'Plus Jakarta Sans',sans-serif;color:var(--suave);cursor:pointer;min-height:36px}
+.ind-chips button[aria-pressed=true]{border-color:var(--wa);color:#0d6b33;background:#e7f8ee}
+.ind-burbuja{margin-top:12px;background:#DCF8C6;border-radius:14px 14px 4px 14px;padding:10px 12px;font-size:13.5px;line-height:1.45;color:#16302d;white-space:pre-line;box-shadow:0 1px 1px rgba(0,0,0,.08);min-height:120px}
 .revela{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
 .revela.visto{opacity:1;transform:none}
 @media (max-width:900px){.bento{grid-template-columns:1fr}.nv-grande{grid-row:auto}.nv-link{grid-column:auto}}
@@ -438,8 +511,51 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
     <span class="mod"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 8h4M12 6v4M10 15h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Recetas</span>
     <span class="mod"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17c3-4 5 2 8-2s4-2 8 1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Consentimientos con firma</span>
     <span class="mod"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4z M4 8l8 4 8-4M12 12v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Inventario y gastos</span>
+    <a class="mod" href="#citas" style="text-decoration:none;color:inherit"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v15H5zM5 10h14M9 3v4M15 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 15l2 2 3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Citas en línea</a>
   </div>
 </div>
+
+<section id="citas" class="citas-sec">
+  <div class="env citas-grid">
+    <div class="revela">
+      <span class="etq">Citas en línea</span>
+      <h2>Tus pacientes agendan solos, a cualquier hora.</h2>
+      <p class="bajada">Comparte tu enlace en Instagram, Facebook o WhatsApp. El paciente elige día y hora entre tus horarios libres y la solicitud te llega a Dentaria.</p>
+      <ol class="cit-pasos">
+        <li><div><b>Ve tus horas libres y ocupadas</b><span>Las ocupadas salen en gris y no se pueden elegir. Nadie ve los datos de tus pacientes.</span></div></li>
+        <li><div><b>Aceptas con un toque</b><span>La cita entra a tu agenda con nombre, teléfono y motivo ya llenos.</span></div></li>
+        <li><div><b>Le confirmas por WhatsApp</b><span>El mensaje de confirmación sale listo. Si no puedes, le ofreces otro horario.</span></div></li>
+      </ol>
+      <div class="cit-acc">
+        <button type="button" class="cit-ver" id="citVer"><i aria-hidden="true"><svg width="10" height="12" viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z" fill="#fff"/></svg></i>Ver el video (30 s)</button>
+      </div>
+    </div>
+    <div class="cit-escena revela" id="citDemo">
+      <div class="cit-tel" aria-label="Demostración: página para pedir cita">
+        <div class="cit-pant">
+          <div class="cit-top"><div class="cit-logo"><svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><path d="M31 14 C27 10 22 8 17 10 C10 13 9 22 11 30 C13 37 15 42 16 50 C17 56 19 58 21 58 C24 58 25 52 26 47 C27 43 29 41 31 40.5 Z" fill="#38BDF8"/><path d="M33 14 C37 10 42 8 47 10 C54 13 55 22 53 30 C51 37 49 42 48 50 C47 56 45 58 43 58 C40 58 39 52 38 47 C37 43 35 41 33 40.5 Z" fill="#BAE6FD"/></svg></div><b>Consultorio Dental Sonrisa</b><small>Elige el día y la hora que prefieras</small></div>
+          <div class="cit-card">
+            <span class="cit-lab">Día</span>
+            <div class="cit-dias" id="citDias"></div>
+            <span class="cit-lab">Hora</span>
+            <div class="cit-horas" id="citHoras"></div>
+            <button type="button" class="cit-pedir" id="citPedir" disabled>Elige una hora</button>
+          </div>
+          <div class="cit-listo" id="citListo" aria-live="polite"><div class="ok" aria-hidden="true">✓</div><b>¡Solicitud enviada!</b><p id="citListoTxt"></p><button type="button" class="cit-otra" id="citOtra">Probar otra vez</button></div>
+        </div>
+      </div>
+      <div class="cit-notif" id="citNotif" role="status">
+        <div class="cab"><i aria-hidden="true"><svg width="15" height="15" viewBox="0 0 64 64" aria-hidden="true"><path d="M31 14 C27 10 22 8 17 10 C10 13 9 22 11 30 C13 37 15 42 16 50 C17 56 19 58 21 58 C24 58 25 52 26 47 C27 43 29 41 31 40.5 Z" fill="#38BDF8"/><path d="M33 14 C37 10 42 8 47 10 C54 13 55 22 53 30 C51 37 49 42 48 50 C47 56 45 58 43 58 C40 58 39 52 38 47 C37 43 35 41 33 40.5 Z" fill="#BAE6FD"/></svg></i>Dentaria · ahora</div>
+        <div class="cu"><b>📅 Nueva solicitud de cita</b><span id="citNotifTxt"></span></div>
+        <div class="bts"><button type="button" class="si" id="citAceptar">Aceptar</button><button type="button" id="citRechazar">Rechazar</button></div>
+        <p class="fin" id="citFin">✓ Confirmada y en tu agenda</p>
+      </div>
+    </div>
+  </div>
+  <div class="cit-video" id="citVideo" role="dialog" aria-modal="true" aria-label="Video: citas en línea">
+    <div class="marco-video"><button type="button" class="cerrar" id="citCerrar" aria-label="Cerrar video">×</button><video id="citVid" playsinline controls preload="none" poster="citas-en-linea.jpg"><source src="citas-en-linea.mp4" type="video/mp4"></video></div>
+  </div>
+</section>
 
 <section id="novedades" class="novedades">
   <div class="env">
@@ -499,6 +615,31 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
             <li><span>08/10 · Transferencia</span><b>$200,00</b></li>
             <li><span>03/11 · Efectivo</span><b>$240,00</b></li>
           </ul>
+        </div>
+      </article>
+
+      <article class="nv revela">
+        <span class="nv-tag">Caja</span>
+        <h3>Cierre de caja del día</h3>
+        <p>Lo cobrado en efectivo, transferencia y tarjeta, las salidas del día y si la caja cuadra, sobra o falta.</p>
+        <div class="nv-demo caja-demo">
+          <div class="cj-fila"><span>Caja inicial</span><b>$20,00</b></div>
+          <div class="cj-fila"><span>+ Cobrado en efectivo</span><b>$115,00</b></div>
+          <div class="cj-fila"><span>− Salidas</span><b>$5,50</b></div>
+          <div class="cj-fila tot"><span><b>Debe haber</b></span><b>$129,50</b></div>
+          <div class="cj-cont"><span>Contaste</span><div class="cj-step"><button type="button" id="cjMenos" aria-label="Restar 50 centavos">−</button><b id="cjCont">$128,00</b><button type="button" id="cjMas" aria-label="Sumar 50 centavos">+</button></div></div>
+          <p class="cj-res" id="cjRes" aria-live="polite"></p>
+          <span class="nv-nota">Demostración: no guarda nada.</span>
+        </div>
+      </article>
+
+      <article class="nv revela">
+        <span class="nv-tag">WhatsApp</span>
+        <h3>Indicaciones después del tratamiento</h3>
+        <p>Un botón en cada sesión envía los cuidados que corresponden al procedimiento. Puedes editar cada mensaje a tu manera.</p>
+        <div class="nv-demo">
+          <div class="ind-chips" id="indChips" role="group" aria-label="Procedimiento"></div>
+          <div class="ind-burbuja" id="indTxt" aria-live="polite"></div>
         </div>
       </article>
 
@@ -970,6 +1111,53 @@ document.querySelectorAll('.arcada').forEach(a=>a.addEventListener('click',ev=>{
   const cab=document.getElementById('aboCab');
   if(cab)cab.addEventListener('click',()=>{const d=cab.closest('.abo-demo'),ab=!d.classList.contains('abierto');d.classList.toggle('abierto',ab);cab.setAttribute('aria-expanded',ab);
     document.getElementById('aboRes').textContent=ab?'3 abonos':'3 abonos · toca para ver';});
+})();
+
+/* citas en línea, cierre de caja e indicaciones: demos de juguete (no se conectan a nada) */
+(function(){
+  const dias=[{k:'lun',n:'Lun',d:9,oc:['09:00','10:30','11:00','15:00']},{k:'mar',n:'Mar',d:10,oc:['09:30','10:00','12:00','16:30','17:00']},{k:'mie',n:'Mié',d:11,oc:['11:30','15:30']}];
+  const HS=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','15:00','15:30','16:00','16:30','17:00'];
+  const box=document.getElementById('citDemo');
+  if(box){
+    const D=document.getElementById('citDias'),H=document.getElementById('citHoras'),P=document.getElementById('citPedir'),L=document.getElementById('citListo'),N=document.getElementById('citNotif');
+    let dia=1,hora='';
+    const nom={lun:'lunes',mar:'martes',mie:'miércoles'};
+    const pinta=()=>{
+      D.innerHTML=dias.map((x,i)=>`<button type="button" aria-pressed="${i===dia}" data-i="${i}">${x.n}<b>${x.d}</b></button>`).join('');
+      H.innerHTML=HS.map(h=>dias[dia].oc.includes(h)?`<button type="button" disabled aria-label="${h} ocupado">${h}<small>Ocupado</small></button>`:`<button type="button" aria-pressed="${h===hora}" data-h="${h}">${h}</button>`).join('');
+      P.disabled=!hora;P.textContent=hora?'Pedir mi cita':'Elige una hora';
+      D.querySelectorAll('button').forEach(b=>b.onclick=()=>{dia=+b.dataset.i;hora='';pinta();});
+      H.querySelectorAll('[data-h]').forEach(b=>b.onclick=()=>{hora=b.dataset.h;pinta();});
+    };
+    P.onclick=()=>{if(!hora)return;const t=`${nom[dias[dia].k]} ${dias[dia].d} de noviembre a las ${hora}`;
+      document.getElementById('citListoTxt').textContent='Pediste tu cita para el '+t+'. El consultorio te confirmará por WhatsApp.';L.classList.add('ver');
+      document.getElementById('citNotifTxt').textContent='Paciente nuevo · '+t;N.classList.remove('hecho');setTimeout(()=>N.classList.add('ver'),600);};
+    document.getElementById('citAceptar').onclick=()=>{N.classList.add('hecho');document.getElementById('citFin').textContent='✓ Confirmada y en tu agenda';};
+    document.getElementById('citRechazar').onclick=()=>{N.classList.add('hecho');document.getElementById('citFin').textContent='Le ofreces otro horario por WhatsApp';};
+    document.getElementById('citOtra').onclick=()=>{L.classList.remove('ver');N.classList.remove('ver');hora='';pinta();};
+    pinta();
+  }
+  const vb=document.getElementById('citVer'),vv=document.getElementById('citVideo'),vid=document.getElementById('citVid');
+  if(vb&&vv){const cerrar=()=>{vv.classList.remove('ver');try{vid.pause();}catch(e){}vb.focus();};
+    vb.onclick=()=>{vv.classList.add('ver');document.getElementById('citCerrar').focus();try{vid.play();}catch(e){}};
+    document.getElementById('citCerrar').onclick=cerrar;vv.addEventListener('click',e=>{if(e.target===vv)cerrar();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&vv.classList.contains('ver'))cerrar();});}
+  // cierre de caja
+  const cj=document.getElementById('cjCont');
+  if(cj){let c=128;const esp=129.5,res=document.getElementById('cjRes'),f=n=>'$'+n.toFixed(2).replace('.',',');
+    const p=()=>{cj.textContent=f(c);const d=Math.round((c-esp)*100)/100;res.className='cj-res '+(d===0?'cuadra':d<0?'falta':'sobra');
+      res.textContent=d===0?'✓ La caja cuadra':d<0?'Falta '+f(-d):'Sobra '+f(d);};
+    document.getElementById('cjMas').onclick=()=>{c=Math.round((c+0.5)*100)/100;p();};
+    document.getElementById('cjMenos').onclick=()=>{c=Math.max(0,Math.round((c-0.5)*100)/100);p();};p();}
+  // indicaciones
+  const ic=document.getElementById('indChips');
+  if(ic){const M={'Extracción':'Hola María 😊 Para que tu recuperación sea rápida:\n• Muerde la gasa 30 minutos.\n• Hoy no te enjuagues con fuerza ni uses pitillo.\n• Come blando y frío o tibio.\n• Toma la medicación como te indicamos.',
+      'Endodoncia':'Hola María 😊 Tu tratamiento de conducto salió muy bien:\n• Una molestia leve unos días es normal.\n• No mastiques duro de ese lado hasta la restauración definitiva.\n• Si hay dolor fuerte o hinchazón, avísanos.',
+      'Blanqueamiento':'Hola María 😁 ¡Tu sonrisa quedó más blanca!\n• 48 horas sin café, té, vino ni gaseosas oscuras.\n• Prefiere alimentos claros.\n• Algo de sensibilidad es normal.',
+      'Brackets':'Hola María 😁 ¡Bienvenida a tu ortodoncia!\n• Los primeros días come blando.\n• Si algo te lastima, usa la cera.\n• Evita lo duro y pegajoso.\n• Cepíllate después de cada comida.'};
+    let sel='Extracción';const t=document.getElementById('indTxt');
+    const p=()=>{ic.innerHTML=Object.keys(M).map(k=>`<button type="button" aria-pressed="${k===sel}">${k}</button>`).join('');t.textContent=M[sel];
+      ic.querySelectorAll('button').forEach(b=>b.onclick=()=>{sel=b.textContent;p();});};p();}
 })();
 </script>
 </body>
