@@ -177,7 +177,7 @@ function pintar(){
     $('#bloqueDatos').hidden=false;$('#err').textContent='';
     $('#enviar').textContent=`${directo?'Pedir mi cita':'Enviar por WhatsApp'} · ${textoFecha(fecha).split(' ').slice(0,2).join(' ')}, ${h}`;
     $('#bloqueDatos').scrollIntoView({behavior:'smooth',block:'nearest'});
-    if(!$('#nombre').value)setTimeout(()=>$('#nombre').focus({preventScroll:true}),350);
+    if(!$('#nombre').value)setTimeout(()=>{const n=$('#nombre');if(n)n.focus({preventScroll:true});},350);
   };
   if(conLugar.length){$('#dias').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>elegirDia(b.dataset.f));elegirDia(conLugar[0]);}
   $('#f').onsubmit=async e=>{
