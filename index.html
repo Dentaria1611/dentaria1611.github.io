@@ -157,6 +157,31 @@ section{padding:96px 0}
 .receta{padding:18px 20px;font-size:14.5px;display:flex;flex-direction:column;gap:10px}
 .aviso-al{background:#FDE2DF;color:#7A1F14;border-radius:12px;padding:12px 14px;font-size:13.5px;font-weight:600;display:flex;gap:10px;align-items:flex-start}
 .med{border:1px solid var(--linea);border-radius:12px;padding:10px 12px}
+.rec-grupo{display:flex;flex-direction:column;gap:6px}
+.rec-et{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#7A92A3}
+.rec-chips{display:flex;flex-wrap:wrap;gap:6px}
+.rec-chips button{border:1.5px solid var(--linea);background:#fff;border-radius:999px;padding:6px 12px;font:700 13px 'Plus Jakarta Sans',sans-serif;color:var(--suave);cursor:pointer;min-height:36px;transition:background .2s,border-color .2s,color .2s,transform .15s}
+.rec-chips button:active{transform:scale(.95)}
+@media (hover:hover){.rec-chips button:hover{border-color:var(--celeste);color:var(--tinta)}}
+.rec-chips button[aria-pressed=true]{border-color:var(--hondo);color:var(--hondo);background:var(--agua)}
+#recAnt button[aria-pressed=true]{border-color:#E2483C;color:#9B1C1C;background:#FDECEA}
+.rec-chips button[aria-pressed=true]::before{content:"✓ "}
+.rec-av{border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.45;animation:recPop .35s cubic-bezier(.2,.9,.3,1.3)}
+.rec-av b.t{display:block;margin-bottom:4px}
+.rec-av ul{margin:0;padding-left:18px}.rec-av li{margin:2px 0}
+.rec-av.peligro{background:#FDE2DF;color:#7A1F14}
+.rec-av.revisar{background:#FEF3C7;color:#78350F}
+.rec-av.ok{background:#DCFCE7;color:#14532D;font-weight:600}
+.rec-av small{opacity:.8}
+.rec-lista{display:flex;flex-direction:column;gap:8px}
+.rec-lista .med{border-left:4px solid var(--linea);transition:border-color .3s}
+.rec-lista .med.peligro{border-left-color:#E2483C;animation:recSacude .45s}
+.rec-lista .med.revisar{border-left-color:#D97706}
+.rec-vacia{color:#7A92A3;font-size:13px;text-align:center;padding:8px;border:1.5px dashed var(--linea);border-radius:12px}
+@keyframes recPop{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes recSacude{0%,100%{transform:none}25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
+@media (prefers-reduced-motion:reduce){.rec-av,.rec-lista .med.peligro{animation:none}}
+
 .med b{display:block}
 .med span{color:var(--suave);font-size:13px}
 .chat{width:100%;max-width:300px;border-radius:34px;background:#0B1B26;padding:10px;box-shadow:0 40px 70px -30px rgba(4,36,58,.6)}
@@ -801,12 +826,14 @@ footer{background:var(--noche);color:#C9E7F8;padding:64px 0 36px;border-top:1px 
         </ul>
       </div>
       <div class="lienzo">
-        <div class="tarj">
-          <div class="tarj-cab">Nueva receta <span>María Torres</span></div>
+        <div class="tarj" id="recDemo">
+          <div class="tarj-cab">Nueva receta <span class="pruebalo">Pruébalo</span></div>
           <div class="receta">
-            <div class="aviso-al"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex:none"><path d="M12 3 2 21h20z" fill="none" stroke="#9B1C1C" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="#9B1C1C" stroke-width="2.2" stroke-linecap="round"/></svg>La paciente tiene registrada alergia a penicilina. Revisa la amoxicilina antes de recetar.</div>
-            <div class="med"><b>Amoxicilina 500 mg</b><span>1 cápsula cada 8 horas por 7 días</span></div>
-            <div class="med"><b>Ibuprofeno 400 mg</b><span>1 tableta cada 8 horas si hay dolor</span></div>
+            <div class="rec-grupo"><span class="rec-et">Ficha del paciente</span><div class="rec-chips" id="recAnt" role="group" aria-label="Antecedentes del paciente"></div></div>
+            <div class="rec-grupo"><span class="rec-et">Toca para recetar</span><div class="rec-chips" id="recMeds" role="group" aria-label="Medicamentos"></div></div>
+            <div id="recAviso" aria-live="polite"></div>
+            <div class="rec-lista" id="recLista"></div>
+            <span class="firma-nota">Ejemplo de juguete. En Dentaria es un aviso automático a partir de lo escrito en la ficha; la decisión es tuya.</span>
           </div>
         </div>
       </div>
@@ -1158,6 +1185,35 @@ document.querySelectorAll('.arcada').forEach(a=>a.addEventListener('click',ev=>{
     let sel='Extracción';const t=document.getElementById('indTxt');
     const p=()=>{ic.innerHTML=Object.keys(M).map(k=>`<button type="button" aria-pressed="${k===sel}">${k}</button>`).join('');t.textContent=M[sel];
       ic.querySelectorAll('button').forEach(b=>b.onclick=()=>{sel=b.textContent;p();});};p();}
+  // recetas: alertas (mismas reglas que la app)
+  const ra=document.getElementById('recAnt');
+  if(ra){const A=['Alergia a penicilina','Asma','Hipertensión','Toma anticoagulantes','Diabetes'];
+    const MD=[['Amoxicilina 500 mg','1 cápsula cada 8 horas por 7 días','peni'],['Ibuprofeno 400 mg','1 tableta cada 8 horas si hay dolor','aine'],['Paracetamol 500 mg','1 tableta cada 8 horas si hay dolor','paracet'],['Dexametasona 4 mg','1 tableta al día por 3 días','cortico']];
+    const ant=new Set(['Alergia a penicilina']),med=new Set(['Amoxicilina 500 mg','Ibuprofeno 400 mg']);
+    const rm=document.getElementById('recMeds'),av=document.getElementById('recAviso'),li=document.getElementById('recLista');let prev='';
+    const reglas=(t)=>{const o=[],n=(v,x)=>o.push([v,x]);
+      if(t==='peni'&&ant.has('Alergia a penicilina'))n('peligro','entre las alergias registradas figura penicilina / amoxicilina.');
+      if(t==='aine'){if(ant.has('Asma'))n('revisar','asma: los antiinflamatorios pueden provocar una crisis en algunos pacientes.');
+        if(ant.has('Hipertensión'))n('revisar','hipertensión: pueden subir la presión o interferir con su medicación.');
+        if(ant.has('Toma anticoagulantes'))n('revisar','riesgo de sangrado / anticoagulantes: aumentan el sangrado.');}
+      if(t==='cortico'){if(ant.has('Diabetes'))n('revisar','diabetes: los corticoides elevan la glucosa.');
+        if(ant.has('Hipertensión'))n('revisar','hipertensión: los corticoides pueden subir la presión.');}
+      return o;};
+    const chips=(el,lista,set)=>{el.innerHTML=lista.map(k=>`<button type="button" aria-pressed="${set.has(k)}">${k}</button>`).join('');
+      el.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>{const k=lista[i];set.has(k)?set.delete(k):set.add(k);p();});};
+    const p=()=>{chips(ra,A,ant);chips(rm,MD.map(m=>m[0]),med);
+      const al=[];let h='';
+      MD.filter(m=>med.has(m[0])).forEach(m=>{const r=reglas(m[2]);r.forEach(x=>al.push([m[0],...x]));
+        const nv=r.some(x=>x[0]==='peligro')?'peligro':r.length?'revisar':'';
+        h+=`<div class="med ${nv}"><b>${m[0]}</b><span>${m[1]}</span></div>`;});
+      li.innerHTML=h||'<div class="rec-vacia">Toca un medicamento para agregarlo a la receta</div>';
+      const key=al.map(a=>a.join()).join('|')+'#'+med.size;
+      if(key!==prev){prev=key;
+        if(!med.size)av.innerHTML='';
+        else if(!al.length)av.innerHTML='<div class="rec-av ok">✓ Sin alertas para esta receta con lo que dice la ficha.</div>';
+        else{const pe=al.some(a=>a[1]==='peligro');
+          av.innerHTML=`<div class="rec-av ${pe?'peligro':'revisar'}"><b class="t">⚠ ${pe?'Posible alergia o contraindicación':'Revisa antes de recetar'}</b><ul>${al.map(a=>`<li><b>${a[0]}</b>: ${a[2]}${a[1]==='peligro'?'':' <small>(precaución)</small>'}</li>`).join('')}</ul></div>`;}}
+    };p();}
 })();
 </script>
 </body>
